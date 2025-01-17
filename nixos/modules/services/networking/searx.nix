@@ -7,6 +7,10 @@ let
 
   cfg = config.services.searx;
 
+  isSearxng = lib.hasPrefix "searxng" cfg.package.name;
+  logoPath = if !isSearxng then "searx/static/themes/simple/img/searx.png" else "searx/static/themes/searxng.png";
+
+
   settingsFile = pkgs.writeText "settings.yml"
     (builtins.toJSON cfg.settings);
 
@@ -14,6 +18,10 @@ let
 
   generateConfig = ''
     cd ${runDir}
+
+    echo @@@@@@
+    ecoh ${logo}
+    echo @@@@@@
 
     # write NixOS settings as JSON
     (
@@ -177,6 +185,24 @@ in
         '';
       };
 
+      logoPath = mkOption {
+        type = types.str;
+        default = if !isSearxng then "searx/static/themes/simple/img/searx.png" else "searx/static/themes/searxng.png";
+        example = ''
+          logo = "/home/example/logo.png
+        '';
+        description = "Relative path to ";
+      };
+    };
+
+      logo = mkOption {
+        type = types.str;
+        default = null;
+        example = ''
+          logo = "/home/example/logo.png
+        '';
+        description = "Replaces the logo on the index page with image at provided path";
+      };
     };
 
   };
