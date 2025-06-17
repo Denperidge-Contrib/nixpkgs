@@ -24,8 +24,8 @@ let
 
         # Thank you pkgs/by-name/di/dim/package.nix for this solution
     postPatch = ''
-      ln -s ${./meow.json} frontend/package-lock.json
-      ln -s ${./meow.json} package-lock.json
+      ln -s ${./package-lock.json} package-lock.json
+      ln -s ${./package-lock.json} frontend/package-lock.json
     '';
 
     pname = "filebrowser-quantum-frontend";
@@ -41,11 +41,22 @@ let
     npmBuildScript = "build";
 
     nodejs = nodejs_22;
-    #makeCacheWritable = true;
-    #npmFlags = [ "--legacy-peer-deps" ];
+    makeCacheWritable = true;
+    
+    #forceGitDeps = true;
+    npmFlags = [ "--legacy-peer-deps" ];
+    #npmDeps = fetchNpmDeps {
+    #    name = "fbq-${version}-npm-deps";
+    #    inherit src;
+    #    
+    #    
+    #    postPatch = "ln -s ${./package-lock.json} package-lock.json";
+#
+    #    #configurePhase = "cd frontend";
+    #    hash = "sha256-QFmq+ZMBLwNSgYIOtWeVhVMZk2qHjZ9MMJOFgzQaTVY=";
+    #  };
 
-
-    npmDepsHash = "sha256-SwF0+1rZNW7Uve6m+ZSaHhagIYhtock/64XLZENWJmo=";
+    npmDepsHash = "sha256-QFmq+ZMBLwNSgYIOtWeVhVMZk2qHjZ9MMJOFgzQaTVY=";
 
 
 
