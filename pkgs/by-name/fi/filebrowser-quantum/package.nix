@@ -1,7 +1,7 @@
 {
   lib,
   fetchFromGitHub,
-  buildGoModule,
+  buildGo124Module,
   importNpmLock,
   fetchNpmDeps,
   buildNpmPackage,
@@ -25,7 +25,6 @@ let
   frontend = buildNpmPackage (finalAttrs: {
     inherit version;
     src = "${src}/frontend";
-
     
     nativeBuildInputs = [
       nodejs_22
@@ -48,7 +47,7 @@ let
     #  ln -s ./packageasa.json ..
     #'';
 
-    pname = "f&lebrowser-quantum-frontend";
+    name = "filebrowser-quantum-frontend";
     dontNpmPrune = true;
     # pkgs/by-name/el/element-desktop/keytar/default.nix
     #npmDeps = fetchNpmDeps {
@@ -75,24 +74,25 @@ let
   });
 
 in
-buildGoModule {
+buildGo124Module {
   pname = "filebrowser";
   inherit version src;
 
-QT_DEBUG_PLUGINS=1;
   vendorHash = "sha256-Jce90mvNzjElCtEMQSSU3IQPz+WLhyEol1ktW4FG7yk=";
 
   excludedPackages = [ "tools" ];
-  #FILEBROWSER_NO_EMBEDED=true;
-  #CGO_ENABLED=1;
-  postBuild = ''
-    
-    FILEBROWSER_GENERATE_CONFIG=true go run .
-    cp generated.yaml backend/http/public/config.generated.yaml
 
-    cd backend/http/ && ln -s ${frontend}/dist
-    #cp -r ${frontend}/dist backend/http
+  preBuild = ''
+    cp -r ${frontend}/lib/node_modules/filebrowser-frontend/dist http/
+
+    FILEBROWSER_GENERATE_CONFIG=true go run .
+    #cp generated.yaml backend/http/public/config.generated.yaml
   '';
+
+  env = {
+    FILEBROWSER_NO_EMBEDED=true;
+    CGO_ENABLED=1; 
+  };
 
   ldflags = [
     "-w"
