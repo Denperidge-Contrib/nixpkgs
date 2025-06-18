@@ -5,7 +5,9 @@
   importNpmLock,
   fetchNpmDeps,
   buildNpmPackage,
-
+  pnpm,
+  vite,
+  qt5,
   nodejs_22,
 }:
 
@@ -21,13 +23,29 @@ let
   };
 
   frontend = buildNpmPackage (finalAttrs: {
-    inherit version src;
+    inherit version;
+    src = "${src}/frontend";
+
+    
+    nativeBuildInputs = [
+      nodejs_22
+    ];
+
+    buildPhase = ''
+    runHook preBuild
+
+    vite build
+
+    runHook postBuild
+    '';
+
+
 
         # Thank you pkgs/by-name/di/dim/package.nix for this solution
-    postPatch = ''
-      ln -s ${./package-lock.json} package-lock.json
-      ln -s ${./package-lock.json} frontend/package-lock.json
-    '';
+    #postPatch = ''
+    #  ln -s ./packageasa.json ..
+    #'';
+    
 
     pname = "filebrowser-quantum-frontend";
 
@@ -38,26 +56,21 @@ let
     #  hash = "sha256-QFmq+ZMBLwNSgYIOtWeVhVMZk2qHjZ9MMJOFgzQaTVY=";
     #};
 
-    npmRoot = "frontend";
-    npmWorkspace = "frontend";
-    npmBuildScript = "build";
+    #npmRoot = "frontend";
+    #npmWorkspace = "frontend";
 
     nodejs = nodejs_22;
     makeCacheWritable = true;
     
+    
     npmDeps = importNpmLock {
-      npmRoot = "${src}/frontend";
+      npmRoot = ./.;
       packageLock = lib.importJSON "${./package-lock.json}";
       package = lib.importJSON "${./package.json}";
     };
-
     npmConfigHook = importNpmLock.npmConfigHook;
     npmFlags = [ "--legacy-peer-deps" ];
-
     #npmDepsHash = "sha256-Mv5oj12nddkQTRYTlV+kcCu9biozlTw8Rl1ZYZ0M4rM=";
-
-
-
   });
 
 in
@@ -65,6 +78,7 @@ buildGoModule {
   pname = "filebrowser";
   inherit version src;
 
+QT_DEBUG_PLUGINS=1;
   vendorHash = "sha256-Jce90mvNzjElCtEMQSSU3IQPz+WLhyEol1ktW4FG7yk=";
 
   #excludedPackages = [ "tools" ];
