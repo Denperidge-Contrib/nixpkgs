@@ -82,15 +82,16 @@ buildGoModule {
 QT_DEBUG_PLUGINS=1;
   vendorHash = "sha256-Jce90mvNzjElCtEMQSSU3IQPz+WLhyEol1ktW4FG7yk=";
 
-  #excludedPackages = [ "tools" ];
-  FILEBROWSER_NO_EMBEDED=true;
+  excludedPackages = [ "tools" ];
+  #FILEBROWSER_NO_EMBEDED=true;
   #CGO_ENABLED=1;
-  tags = [""];
-  preBuild = ''
+  postBuild = ''
+    
     FILEBROWSER_GENERATE_CONFIG=true go run .
     cp generated.yaml backend/http/public/config.generated.yaml
 
-    cp -r ${frontend}/dist backend/http
+    cd backend/http/ && ln -s ${frontend}/dist
+    #cp -r ${frontend}/dist backend/http
   '';
 
   ldflags = [
