@@ -29,12 +29,14 @@ let
     
     nativeBuildInputs = [
       nodejs_22
+      
     ];
+    
 
     buildPhase = ''
     runHook preBuild
 
-    vite build
+    npx vite build
 
     runHook postBuild
     '';
@@ -45,10 +47,9 @@ let
     #postPatch = ''
     #  ln -s ./packageasa.json ..
     #'';
-    
 
-    pname = "filebrowser-quantum-frontend";
-
+    pname = "f&lebrowser-quantum-frontend";
+    dontNpmPrune = true;
     # pkgs/by-name/el/element-desktop/keytar/default.nix
     #npmDeps = fetchNpmDeps {
     #  src = "${src}/frontend";
