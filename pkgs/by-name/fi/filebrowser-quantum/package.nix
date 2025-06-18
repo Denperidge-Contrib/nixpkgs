@@ -2,6 +2,7 @@
   lib,
   fetchFromGitHub,
   buildGoModule,
+  importNpmLock,
   fetchNpmDeps,
   buildNpmPackage,
 
@@ -38,25 +39,22 @@ let
     #};
 
     npmRoot = "frontend";
+    npmWorkspace = "frontend";
     npmBuildScript = "build";
 
     nodejs = nodejs_22;
     makeCacheWritable = true;
     
-    #forceGitDeps = true;
-    npmFlags = [ "--legacy-peer-deps" ];
-    #npmDeps = fetchNpmDeps {
-    #    name = "fbq-${version}-npm-deps";
-    #    inherit src;
-    #    
-    #    
-    #    postPatch = "ln -s ${./package-lock.json} package-lock.json";
-#
-    #    #configurePhase = "cd frontend";
-    #    hash = "sha256-QFmq+ZMBLwNSgYIOtWeVhVMZk2qHjZ9MMJOFgzQaTVY=";
-    #  };
+    npmDeps = importNpmLock {
+      npmRoot = "${src}/frontend";
+      packageLock = lib.importJSON "${./package-lock.json}";
+      package = lib.importJSON "${./package.json}";
+    };
 
-    npmDepsHash = "sha256-QFmq+ZMBLwNSgYIOtWeVhVMZk2qHjZ9MMJOFgzQaTVY=";
+    npmConfigHook = importNpmLock.npmConfigHook;
+    npmFlags = [ "--legacy-peer-deps" ];
+
+    #npmDepsHash = "sha256-Mv5oj12nddkQTRYTlV+kcCu9biozlTw8Rl1ZYZ0M4rM=";
 
 
 
