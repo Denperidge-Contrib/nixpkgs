@@ -1,7 +1,7 @@
 {
   lib,
   fetchFromGitHub,
-  buildGo124Module,
+  buildGoModule,
   importNpmLock,
   fetchNpmDeps,
   buildNpmPackage,
@@ -74,20 +74,23 @@ let
   });
 
 in
-buildGo124Module {
+buildGoModule {
+  name = "filebrowser-quantum";
   pname = "filebrowser";
   inherit version src;
+
+  #sourceRoot = "${src.name}/backend";
 
   vendorHash = "sha256-Jce90mvNzjElCtEMQSSU3IQPz+WLhyEol1ktW4FG7yk=";
 
   excludedPackages = [ "tools" ];
 
-  preBuild = ''
-    cp -r ${frontend}/lib/node_modules/filebrowser-frontend/dist http/
-
-    FILEBROWSER_GENERATE_CONFIG=true go run .
-    #cp generated.yaml backend/http/public/config.generated.yaml
-  '';
+  #postPatch = ''
+  #  cp -r ${frontend}/lib/node_modules/filebrowser-frontend/dist http/
+#
+  #  FILEBROWSER_GENERATE_CONFIG=true go run .
+  #  #cp generated.yaml backend/http/public/config.generated.yaml
+  #'';
 
   env = {
     FILEBROWSER_NO_EMBEDED=true;
