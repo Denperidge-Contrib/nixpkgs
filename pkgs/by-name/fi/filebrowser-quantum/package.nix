@@ -64,10 +64,10 @@ buildGoModule {
   '';
 
   meta = with lib; {
-    description = "Filebrowser is a web application for managing files and directories";
-    homepage = "https://filebrowser.org";
+    description = "FileBrowser Quantum provides an easy way to access and manage your files from the web";
+    homepage = "https://github.com/gtsteffaniak/filebrowser";
     license = licenses.asl20;
-    maintainers = with maintainers; [ oakenshield ];
+    maintainers = with maintainers; [ denperidge ];
     mainProgram = "filebrowser";
   };
 }
