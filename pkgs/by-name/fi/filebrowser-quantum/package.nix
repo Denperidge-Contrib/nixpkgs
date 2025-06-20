@@ -44,7 +44,6 @@ buildGoModule {
   excludedPackages = [ "tools" ];
 
   postPatch = ''
-    mkdir http/dist
     cp -r ${frontend}/lib/node_modules/filebrowser-frontend/dist/* http/embed
   '';
 
