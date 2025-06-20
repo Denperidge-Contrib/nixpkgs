@@ -30,85 +30,36 @@ let
     src = "${src}/frontend";
     name = "filebrowser-quantum-frontend";
 
-    nativeBuildInputs = [
-      nodejs_22
-    ];
-
-    nodejs = nodejs_22;
-    npmFlags = [ "--legacy-peer-deps" ];
-    makeCacheWritable = true;
-    dontNpmPrune = true;
-    
-    # Prevents ENOTCACHED
-    npmDeps = importNpmLock {
-      npmRoot = ./.;
-      packageLock = lib.importJSON "${./package-lock.json}";
-      package = lib.importJSON "${./package.json}";
-    };
-    npmConfigHook = importNpmLock.npmConfigHook;
-
+    npmDepsHash = "sha256-Lyi8O4rKtybsFhzs32az4AJ/HEnoEo9VuuRtaJ4Jy/0=";
     # Thank you pkgs/by-name/di/dim/package.nix for this solution
     postPatch = ''
       ln -s ${./package-lock.json} package-lock.json
       cp ${./config.generated.yaml}  ./public/config.generated.yaml
     '';
 
+    # Manual invocation for later copying
     buildPhase = ''
     runHook preBuild
     npx vite build
     runHook postBuild
     '';
   });
-
 in
 buildGoModule {
-  name = "filebrowser-quantum";
-  pname = "filebrowser";
   inherit version src;
-
-
-  nativeBuildInputs = [
-    fd
-    rsync
-  ];
-  #modRoot = "backend";
+  pname = "filebrowser-quantum";
   sourceRoot = "${src.name}/backend";
 
   vendorHash = "sha256-v7hYo2HIKonnNVGwOV8WiaWzo4FNSG5/8Ov3w/ivB+8=";
 
   excludedPackages = [ "tools" ];
 
-
   postPatch = ''
     mkdir http/dist
     cp -r ${frontend}/lib/node_modules/filebrowser-frontend/dist/* http/embed
-    #ln -s $(pwd)/http/embed $(pwd)/http/dist
-
-    ls -l  http/embed
-    fd index.html
-
-    # This is seemingly not necessary? It's not done in upstream GH release workflow
-    #FILEBROWSER_GENERATE_CONFIG=true go run .
-    #cp generated.yaml backend/http/public/config.generated.yaml
   '';
 
-  env = {
-    #FILEBROWSER_NO_EMBEDED=false;
-    #CGO_ENABLED=1;
-    #FILEBROWSER_GENERATE_CONFIG=true;
-  };
-
-  ldflags = [
-    "-w"
-    "-s"
-    "-X 'github.com/gtsteffaniak/filebrowser/backend/version.CommitSHA=${commitSha}'"
-    "-X 'github.com/gtsteffaniak/filebrowser/backend/version.Version=${version}'"
-  ];
-
   postInstall = ''
-    echo $out
-    ls -l $out
-    echo @@@@
     mv $out/bin/backend $out/bin/filebrowser
   '';
 
