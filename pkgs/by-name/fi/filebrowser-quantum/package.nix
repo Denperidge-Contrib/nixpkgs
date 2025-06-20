@@ -1,22 +1,12 @@
 {
   lib,
   fetchFromGitHub,
-  buildGoModule,
-  importNpmLock,
-  fetchNpmDeps,
-  gnumake,
   buildNpmPackage,
-  rsync,
-  pnpm,
-  vite,
-  fd,
-  qt5,
-  nodejs_22,
+  buildGoModule,
 }:
 
 let
   version = "0.7.9-beta";
-  commitSha = "b5b4c0c43b19706287268dce2ead6ff0f0217710";
 
   src = fetchFromGitHub {
     owner = "gtsteffaniak";
