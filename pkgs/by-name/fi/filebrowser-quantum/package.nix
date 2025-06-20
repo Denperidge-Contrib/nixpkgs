@@ -105,6 +105,13 @@ buildGoModule {
     "-X 'github.com/gtsteffaniak/filebrowser/backend/version.Version=${version}'"
   ];
 
+  postInstall = ''
+    echo $out
+    ls -l $out
+    echo @@@@
+    mv $out/bin/backend $out/bin/filebrowser
+  '';
+
   meta = with lib; {
     description = "Filebrowser is a web application for managing files and directories";
     homepage = "https://filebrowser.org";
