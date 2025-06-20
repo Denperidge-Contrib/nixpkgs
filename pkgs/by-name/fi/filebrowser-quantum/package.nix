@@ -4,6 +4,7 @@
   buildGoModule,
   importNpmLock,
   fetchNpmDeps,
+  gnumake,
   buildNpmPackage,
   rsync,
   pnpm,
@@ -14,14 +15,14 @@
 }:
 
 let
-  version = "v0.7.9-beta";
+  version = "0.7.9-beta";
   commitSha = "b5b4c0c43b19706287268dce2ead6ff0f0217710";
 
   src = fetchFromGitHub {
     owner = "gtsteffaniak";
     repo = "filebrowser";
     rev = "v${version}";
-    hash = "sha256-jckwk45pIRrlzZaG3jH8aLq08L5xnrbt4OdwKNS6+nI=";
+    hash = "sha256-o6UoYYULnVgkXN9fNnTTNxF+i9pA7FuV31xfZppXMBE=";
   };
 
   frontend = buildNpmPackage (finalAttrs: {
@@ -70,23 +71,21 @@ buildGoModule {
     fd
     rsync
   ];
-  #sourceRoot = "${src.name}/backend";
+  #modRoot = "backend";
+  sourceRoot = "${src.name}/backend";
 
-  vendorHash = "sha256-Jce90mvNzjElCtEMQSSU3IQPz+WLhyEol1ktW4FG7yk=";
+  vendorHash = "sha256-v7hYo2HIKonnNVGwOV8WiaWzo4FNSG5/8Ov3w/ivB+8=";
 
   excludedPackages = [ "tools" ];
 
 
   postPatch = ''
-    #mkdir http/embed
-    cp -r ${frontend}/lib/node_modules/filebrowser-frontend/* frontend/
-    
-    ls -l 
-    echo ééé
-    ls config.yaml  # Crashes
-    ln -s $(pwd)/http/embed $(pwd)/http/dist
-    fd config.yaml
-    echo @@@
+    mkdir http/dist
+    cp -r ${frontend}/lib/node_modules/filebrowser-frontend/dist/* http/embed
+    #ln -s $(pwd)/http/embed $(pwd)/http/dist
+
+    ls -l  http/embed
+    fd index.html
 
     # This is seemingly not necessary? It's not done in upstream GH release workflow
     #FILEBROWSER_GENERATE_CONFIG=true go run .
