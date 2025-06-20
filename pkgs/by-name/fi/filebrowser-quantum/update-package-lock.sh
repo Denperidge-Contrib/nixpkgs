@@ -1,5 +1,5 @@
 #! /usr/bin/env nix-shell
-#! nix-shell -i bash -p nodejs_22 wget npm-lockfile-fix
+#! nix-shell -i bash -p wget nodejs_22
 version="v0.7.9-beta"
 
 echo Selected filebrowser version: $version
@@ -16,5 +16,3 @@ echo "[4/4] Cleanup unneeded files..."
 rm package.json
 
 echo "Done!"
-
-
