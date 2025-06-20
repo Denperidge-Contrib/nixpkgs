@@ -30,11 +30,10 @@ let
     src = "${src}/frontend";
     name = "filebrowser-quantum-frontend";
 
-    npmDepsHash = "sha256-Lyi8O4rKtybsFhzs32az4AJ/HEnoEo9VuuRtaJ4Jy/0=";
+    npmDepsHash = "sha256-Hv/9X4ryE8QRJwHO19G7E4bwQXUisiQjuCxJBO8m87o=";
     # Thank you pkgs/by-name/di/dim/package.nix for this solution
     postPatch = ''
       ln -s ${./package-lock.json} package-lock.json
-      cp ${./config.generated.yaml}  ./public/config.generated.yaml
     '';
 
     # Manual invocation for later copying
