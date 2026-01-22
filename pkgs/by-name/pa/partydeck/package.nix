@@ -32,7 +32,21 @@
   SDL2,
   libavif,
   libinput,
+  pixman,
+  seatd,
+  xwayland,
+  libxcb-wm,
+  lcms2,
+  libxcb-errors,
+  libdecor,
+  glslang,
+  luajit,
+  v4l-utils,
   ninja,
+  libliftoff,
+  git,
+  python3,
+  gbenchmark,
   nix-update-script,
 }:
 
@@ -115,8 +129,9 @@ in rustPlatform.buildRustPackage {
     pkg-config
     cmake
     ninja
-    
-    
+    glslang
+    v4l-utils
+    git
   ];
   buildInputs = [
     libx11
@@ -145,6 +160,17 @@ in rustPlatform.buildRustPackage {
     SDL2
     libavif
     libinput
+    pixman
+    seatd
+    xwayland
+    libxcb-wm
+    lcms2
+    libxcb-errors
+    libdecor
+    luajit
+    libliftoff
+    gbenchmark
+    python3
   ];
 
   cargoHash = "sha256-uVR/t4m/L9qaOabw2kaAT5oebsqxYYbZyXEZLBZtiYE=";
