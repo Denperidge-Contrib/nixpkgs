@@ -3,50 +3,9 @@
   lib,
   fetchFromGitHub,
   rustPlatform,
-  meson,
+  callPackage,
   pkg-config,
-  cmake,
-  hwdata,
-  libx11,
-  wayland,
-  vulkan-loader,
-  pipewire,
-  wayland-scanner,
-  wayland-protocols,
-  libxcb,
-  libxdamage,
-  libxfixes,
-  libxcomposite,
-  libxcursor,
-  libxrender,
-  libxext,
-  libxxf86vm,
-  libxtst,
-  libxres,
-  libxmu,
-  libxi,
-  libxkbcommon,
-  libdrm,
-  systemd,
-  libcap,
-  SDL2,
-  libavif,
-  libinput,
-  pixman,
-  seatd,
-  xwayland,
-  libxcb-wm,
-  lcms2,
-  libxcb-errors,
-  libdecor,
-  glslang,
-  luajit,
-  v4l-utils,
-  ninja,
-  libliftoff,
-  git,
-  python3,
-  gbenchmark,
+  openssl,
   nix-update-script,
 }:
 
@@ -60,13 +19,7 @@ let
     hash = "sha256-f5D+VoAzTeWIOhgiBiQTyTeSVRVBDiIxC+y5uwP92gw=";
     fetchSubmodules = true;
   };
-  gamescope = fetchFromGitHub {
-    owner = "davidawesome02-backup";
-    repo = "gamescope";
-    rev = "e8b5a00b810f080aafb3b401c7e656957dfe695e";
-    hash = "sha256-EE3Qr0JX9OY4DhgON+f2F67t6DtBqmyEK9kwSIX+kFc=";
-    fetchSubmodules = true;
-  };
+  gamescope = callPackage ./gamescope.nix {};
   glm = stdenv.mkDerivation {
     name = "glm";
     src = fetchFromGitHub {
@@ -125,52 +78,11 @@ in rustPlatform.buildRustPackage {
   pname = "partydeck";
 
   nativeBuildInputs = [
-    meson
     pkg-config
-    cmake
-    ninja
-    glslang
-    v4l-utils
-    git
   ];
-  buildInputs = [
-    libx11
-    hwdata
-    wayland
-    vulkan-loader
-    pipewire
-    wayland-scanner
-    wayland-protocols
-    libxcb
-    libxdamage
-    libxfixes
-    libxcomposite
-    libxcursor
-    libxrender
-    libxext
-    libxxf86vm
-    libxtst
-    libxres
-    libxmu
-    libxi
-    libxkbcommon
-    libdrm
-    systemd
-    libcap
-    SDL2
-    libavif
-    libinput
-    pixman
-    seatd
-    xwayland
-    libxcb-wm
-    lcms2
-    libxcb-errors
-    libdecor
-    luajit
-    libliftoff
-    gbenchmark
-    python3
+
+  buildInpts = [
+    openssl
   ];
 
   cargoHash = "sha256-uVR/t4m/L9qaOabw2kaAT5oebsqxYYbZyXEZLBZtiYE=";
@@ -182,22 +94,9 @@ in rustPlatform.buildRustPackage {
   };
 
   preBuild = ''
-     ln -s ${glm} deps/gamescope/subprojects/glm
-     ln -s ${stb} deps/gamescope/subprojects/stb
-    cat deps/gamescope/subprojects/glm/meson.build
-    
-
-    echo ln -s ${gamescope} deps/gamescope
-    ls deps/gamescope/subprojects/
+    ln -s ${gamescope} deps/gamescope
+    ls deps/gamescope/
     echo meow
-    ls deps/gamescope/subprojects/glm
-    
-    cd deps/gamescope
-
-    
-    meson setup build/
-    ninja -C build/
-    #popd
   '';
 
   postInstall = ''
