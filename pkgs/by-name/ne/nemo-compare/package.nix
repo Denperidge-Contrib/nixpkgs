@@ -1,5 +1,6 @@
 {
   python3,
+  pkgs,
   lib,
   fetchFromGitHub,
 }:
@@ -21,8 +22,19 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
   
   build-system = with python3.pkgs; [ setuptools ];
 
-  patches = [
-    ./fix-paths.patch
+  prePatch = ''
+    sed -i "s:/usr/share:share:" setup.py
+    sed -i "s:/usr/bin:bin:" setup.py
+    sed -i "s:/usr/share:$out/share:" src/nemo-compare-preferences
+    sed -i "s:/usr/share:$out/share:" src/nemo-compare.py
+    sed -i "s:\['/usr/bin', '/usr/local/bin'\]:\['/run/current-system/sw/bin/', '/usr/bin', '/usr/local/bin'\]:" src/utils.py
+    sed -i "s@import sys:@import sys:\nsys.path += '${python3.pkgs.makePythonPath [python3.pkgs.pygobject3]}'.split(os.pathsep)@" src/nemo-compare.py
+    sed -i "s@import os@import os\nimport sys\nsys.path += '${python3.pkgs.makePythonPath [python3.pkgs.pygobject3]}'.split(os.pathsep)@" src/nemo-compare-preferences.py
+  '';
+
+  nativeBuildInputs = with pkgs; [
+    wrapGAppsHook3
+    gobject-introspection
   ];
 
   meta = {
