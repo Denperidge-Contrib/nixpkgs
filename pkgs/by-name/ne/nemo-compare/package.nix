@@ -18,25 +18,12 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
   };
 
   sourceRoot = "${finalAttrs.src.name}/nemo-compare";
-
-  postPatch = ''
-    substituteInPlace setup.py \
-      --replace-fail "/usr/share" "share"
-
-    substituteInPlace setup.py \
-      --replace-fail "/usr/bin" "bin"
-      
-    substituteInPlace src/nemo-compare-preferences \
-      --replace-fail "/usr/share/" "/run/current-system/sw/bin/"
-    
-    substituteInPlace src/nemo-compare.py \
-      --replace-fail "/usr/share/" "/run/current-system/sw/bin/"
-
-    substituteInPlace src/utils.py \
-      --replace-fail "COMPARATOR_PATHS = [" "COMPARATOR_PATHS = ['/run/current-system/sw/bin/, "
-  '';
-
+  
   build-system = with python3.pkgs; [ setuptools ];
+
+  patches = [
+    ./fix-paths.patch
+  ];
 
   meta = {
     homepage = "https://github.com/linuxmint/nemo-extensions/tree/master/nemo-compare";
