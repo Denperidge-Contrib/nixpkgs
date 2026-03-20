@@ -2,6 +2,7 @@
   python3,
   pkgs,
   lib,
+  nemo,
   fetchFromGitHub,
 }:
 
@@ -36,6 +37,8 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
     wrapGAppsHook3
     gobject-introspection
   ];
+
+  env.PKG_CONFIG_LIBNEMO_EXTENSION_EXTENSIONDIR = "${placeholder "out"}/${nemo.extensiondir}";
 
   meta = {
     homepage = "https://github.com/linuxmint/nemo-extensions/tree/master/nemo-compare";
