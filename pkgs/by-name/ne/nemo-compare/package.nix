@@ -34,7 +34,7 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
   '';
 
   nativeBuildInputs = with pkgs; [
-    pkg-config
+    nemo-python
     wrapGAppsHook3
     gobject-introspection
   ];
