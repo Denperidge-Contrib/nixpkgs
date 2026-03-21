@@ -34,12 +34,11 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
   '';
 
   nativeBuildInputs = with pkgs; [
-    nemo-python
     wrapGAppsHook3
     gobject-introspection
   ];
 
-  env.PKG_CONFIG_LIBNEMO_EXTENSION_EXTENSIONDIR = "${placeholder "out"}/${nemo.extensiondir}";
+  #env.PKG_CONFIG_LIBNEMO_EXTENSION_EXTENSIONDIR = "${placeholder "out"}/${nemo.extensiondir}";
 
   meta = {
     homepage = "https://github.com/linuxmint/nemo-extensions/tree/master/nemo-compare";
