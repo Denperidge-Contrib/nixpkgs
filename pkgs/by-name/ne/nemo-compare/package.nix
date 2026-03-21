@@ -34,6 +34,7 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
   '';
 
   nativeBuildInputs = with pkgs; [
+    pkg-config
     wrapGAppsHook3
     gobject-introspection
   ];
