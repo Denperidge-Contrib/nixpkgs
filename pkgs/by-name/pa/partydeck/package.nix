@@ -6,7 +6,11 @@
   callPackage,
   pkg-config,
   openssl,
-  nix-update-script,
+  autoPatchelfHook,
+  sdl2-compat,
+  SDL2,
+  ninja,
+  meson,
 }:
 
 let 
@@ -79,18 +83,24 @@ in rustPlatform.buildRustPackage {
 
   nativeBuildInputs = [
     pkg-config
+    autoPatchelfHook
   ];
 
   buildInpts = [
     openssl
+    SDL2
+    sdl2-compat
   ];
 
   cargoHash = "sha256-uVR/t4m/L9qaOabw2kaAT5oebsqxYYbZyXEZLBZtiYE=";
+  cargoFlags = ["--release"];
 
-  # Compile-time environment variables for where to find assets needed at runtime
+  preFetch = ''
+  '';
+
   env = {
-    #POLARIS_WEB_DIR = "${polaris-web}/share/polaris-web";
-    #POLARIS_SWAGGER_DIR = "${placeholder "out"}/share/polaris-swagger";
+    OPENSSL_LIB_DIR = "${lib.getLib openssl}/lib";
+    OPENSSL_DIR = "${lib.getDev openssl}";
   };
 
   preBuild = ''
@@ -98,25 +108,25 @@ in rustPlatform.buildRustPackage {
     ls deps/gamescope/
     echo meow
   '';
+  # See https://github.com/partydeck/partydeck/blob/v0.8.5/build.sh
+  postbuild = ''
+    rm -rf build/partydeck
+    mkdir -p build/ build/res build/bin && \
+    cp target/release/partydeck build/ && \
+    cp LICENSE build/ && cp COPYING.md build/thirdparty.txt && \
+    cp res/splitscreen_kwin.js res/splitscreen_kwin_vertical.js build/res && \
+    cp deps/gamescope/build-gcc/src/gamescope build/bin/gamescope-kbm
+  '';
 
   postInstall = ''
   '';
 
-
-  passthru.updateScript = nix-update-script { };
-
   meta = {
-    description = "Self-host your music collection, and access it from any computer and mobile device";
-    longDescription = ''
-      Polaris is a FOSS music streaming application, designed to let you enjoy your music collection
-      from any computer or mobile device. Polaris works by streaming your music directly from your
-      own computer, without uploading it to a third-party. There are no  kind of premium version.
-      The only requirement is that your computer stays on while it streams your music!
-    '';
-    homepage = "https://github.com/agersant/polaris";
+    description = " A split-screen game launcher for Linux/SteamOS ";
+    homepage = "https://github.com/partydeck/partydeck";
     license = lib.licenses.mit;
-    maintainers = with lib.maintainers; [ pbsds ];
-    platforms = lib.platforms.unix;
+    maintainers = with lib.maintainers; [ denperidge ];
+    platforms = lib.platforms.linux;
     mainProgram = "partydeck";
   };
 }
